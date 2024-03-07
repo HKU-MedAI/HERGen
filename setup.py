@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 long_description = Path("README.md").read_text(encoding="utf-8")
 version = "1.0"
-package_name = "biovlp"
+package_name = "hergen"
 description = "HERGen: Elevating Radiology Report Generation with Longitudinal Data"
 
 setup(
