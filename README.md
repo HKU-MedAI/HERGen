@@ -1,4 +1,4 @@
-# History-enhanced-Report-Generation
+# HERGen: Elevating Radiology Report Generation with Longitudinal Data
 
 ### Overview
 
