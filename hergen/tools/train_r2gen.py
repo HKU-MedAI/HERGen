@@ -91,9 +91,9 @@ def main(hparams: Namespace):
 if __name__ == "__main__":
     '''
     Command to run this script:
-    CUDA_VISIBLE_DEVICES=2,3 python biovlp/tools/train_r2gen.py --num_devices 2 --batch_size 16 --annotation_file /disk1/fywang/CXR_dataset/temporal_CXR/mimic_annotation.json
+    CUDA_VISIBLE_DEVICES=2,3 python biovlp/tools/train_r2gen.py --num_devices 2 --batch_size 16 --annotation_file /disk1/*/CXR_dataset/temporal_CXR/mimic_annotation.json
     CUDA_VISIBLE_DEVICES=0,1 python biovlp/tools/train_r2gen.py --num_devices 1 --batch_size 16 --test_only \
-        --ckpt_path /home/fywang/Documents/Multi-seq-mae/data/report_generation/r2gen_2024_02_29_10_58_46/ckpts/last.ckpt
+        --ckpt_path /home/*/Documents/Multi-seq-mae/data/report_generation/r2gen_2024_02_29_10_58_46/ckpts/last.ckpt
     '''
     parser = ArgumentParser(
         description="Run downstream task of few shot learning")
@@ -113,9 +113,9 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_name', type=str, default='mimic_cxr',
                         choices=['iu_xray', 'mimic_cxr'], help='the dataset to be used.')
     parser.add_argument("--dataset_dir", type=str,
-                        default="/disk1/fywang/CXR_dataset/mimic_data/2.0.0/files")
+                        default="/disk1/*/CXR_dataset/mimic_data/2.0.0/files")
     parser.add_argument("--annotation_file", type=str,
-                        default="/disk1/fywang/CXR_dataset/knowledge_graph/mimic_annotation.json")
+                        default="/disk1/*/CXR_dataset/knowledge_graph/mimic_annotation.json")
     parser.add_argument('--max_seq_length', type=int, default=60,
                         help='the maximum sequence length of the reports.')
 

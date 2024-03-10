@@ -86,10 +86,10 @@ def main(hparams: Namespace):
     # # ckpt_path="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/temporal_decoder_2023_10_12_14_46_09/ckpts/epoch=7-step=9776.ckpt")
     # trainer.test(model, datamodule=datamodule, ckpt_path="best")
     # model = Cvt2DistilGPT2Module.load_from_checkpoint(
-    #     "/home/fywang/Documents/Multi-seq-mae/data/backup_report_generation/cvt2distilgpt2_2023_11_02_15_41_16/ckpts/epoch=15-step=36368.ckpt",
+    #     "/home/*/Documents/Multi-seq-mae/data/backup_report_generation/cvt2distilgpt2_2023_11_02_15_41_16/ckpts/epoch=15-step=36368.ckpt",
     #     **vars(hparams))
     model = TemporalReportGenerationModule.load_from_checkpoint(
-        "/home/fywang/Documents/Multi-seq-mae/data/backup_report_generation/temporal_decoder_2023_10_25_21_08_26/ckpts/last.ckpt",
+        "/home/*/Documents/Multi-seq-mae/data/backup_report_generation/temporal_decoder_2023_10_25_21_08_26/ckpts/last.ckpt",
         **vars(hparams))
     datamodule = model.datamodule
     trainer.test(model, datamodule=datamodule)
@@ -112,10 +112,10 @@ if __name__ == "__main__":
     parser.add_argument("--dataset_name", type=str, default="mimic_cxr",
                         choices=["mimic_cxr", "iu_xray"])
     parser.add_argument("--annotation_file", type=str,
-                        default="/disk1/fywang/CXR_dataset/temporal_CXR/mimic_annotation.json"
+                        default="/disk1/*/CXR_dataset/temporal_CXR/mimic_annotation.json"
                         )
     parser.add_argument("--dataset_dir", type=str,
-                        default="/disk1/fywang/CXR_dataset/mimic_data/2.0.0/files"
+                        default="/disk1/*/CXR_dataset/mimic_data/2.0.0/files"
                         )
     parser.add_argument("--visual_model", type=str, default="microsoft/cvt-21-384-22k",
                         choices=["microsoft/cvt-21-384-22k", "resnet_50", "vit_base_patch16_384"])
