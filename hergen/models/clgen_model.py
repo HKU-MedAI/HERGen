@@ -63,7 +63,7 @@ class CLGenerationModule(Cvt2DistilGPT2Module):
         self.img_emb_projection = nn.Linear(768, 128)
 
         # define CXR-BERT
-        url = "microsoft/BiomedVLP-CXR-BERT-specialized"
+        url = "microsoft/BiomedVLP-CXR-BERT-general"
         self.encode_tokenizer = AutoTokenizer.from_pretrained(
             url, trust_remote_code=True)
         self.text_encoder = AutoModel.from_pretrained(
