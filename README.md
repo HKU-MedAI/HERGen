@@ -3,7 +3,7 @@
 <b>HERGen: Elevating Radiology Report Generation with Longitudinal Data</b>, ECCV 2024.
 <br><em>Fuying Wang, Shenghui Du, and Lequan Yu</em></br>
 
-[Arxiv]() | [Cite](#cite)
+[Arxiv](https://arxiv.org/pdf/2407.15158) | [Cite](#acknowledgements)
 
 **Abstract**: Radiology reports provide detailed descriptions of medical imaging integrated with patients’ medical histories, while report writing is traditionally labor-intensive, increasing radiologists’ workload and the risk of diagnostic errors. Recent efforts in automating this process seek to mitigate these issues by enhancing accuracy and clinical efficiency. However, existing automated approaches are based on a single timestamp and often neglect the critical temporal aspect of patients’ imaging histories, which is essential for accurate longitudinal analysis. To address this gap, we propose a novel History Enhanced Radiology Report Generation (HERGen) framework that employs a group causal transformer to efficiently integrate longitudinal data across patient visits. Our approach
 not only allows for comprehensive analysis of varied historical data but also improves the quality of generated reports through an auxiliary contrastive objective that aligns image sequences with their corresponding reports. More importantly, we introduce a curriculum learning-based strategy to adeptly handle the inherent complexity of longitudinal radiology data and thus stabilize the optimization of our framework. The extensive evaluations across three datasets demonstrate that our framework surpasses existing methods in generating accurate radiology reports and effectively predicting disease progression from medical images.
