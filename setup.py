@@ -9,8 +9,8 @@ description = "HERGen: Elevating Radiology Report Generation with Longitudinal D
 setup(
     name=package_name,
     version=version,
-    author="***",
-    author_email="***",
+    author="Fuying Wang",
+    author_email="fuyingw@connect.hku.hk",
     description=description,
     long_description=long_description,
     packages=find_packages()

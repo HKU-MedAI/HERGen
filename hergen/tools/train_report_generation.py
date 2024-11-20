@@ -62,46 +62,29 @@ def main(hparams: Namespace):
     hparams.exp_log_dir = os.path.join(
         REPO_ROOT_DIR, f"data/report_generation/{extension}/exp_logs")
     # initialize tokenizer
-    # if hparams.model_name == "cvt2distilgpt2":
-    #     model = Cvt2DistilGPT2Module(**vars(hparams))
-    # elif hparams.model_name == "temporal_decoder":
-    #     model = TemporalReportGenerationModule(**vars(hparams))
-    #     # model = TemporalReportGenerationModule.load_from_checkpoint(
-    #     #     hparams.ckpt_path, batch_size=hparams.batch_size)
-    # elif hparams.model_name == "clgen":
-    #     model = CLGenerationModule(**vars(hparams))
-    # else:
-    #     raise NotImplementedError
-    # datamodule = model.datamodule
+    if hparams.model_name == "cvt2distilgpt2":
+        model = Cvt2DistilGPT2Module(**vars(hparams))
+    elif hparams.model_name == "temporal_decoder":
+        model = TemporalReportGenerationModule(**vars(hparams))
+    elif hparams.model_name == "clgen":
+        model = CLGenerationModule(**vars(hparams))
+    else:
+        raise NotImplementedError
+    datamodule = model.datamodule
 
-    # if hparams.ckpt_path:
-    #     ckpt = torch.load(hparams.ckpt_path)
-    #     msg = model.load_state_dict(ckpt["state_dict"], strict=False)
-    #     print(msg)
+    if hparams.ckpt_path:
+        ckpt = torch.load(hparams.ckpt_path)
+        msg = model.load_state_dict(ckpt["state_dict"], strict=False)
+        print(msg)
 
     # ------------------------
     # 3 START TRAINING
     # ------------------------
-    # trainer.fit(model, datamodule=datamodule)
-    # # ckpt_path="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/temporal_decoder_2023_10_12_14_46_09/ckpts/epoch=7-step=9776.ckpt")
-    # trainer.test(model, datamodule=datamodule, ckpt_path="best")
-    # model = Cvt2DistilGPT2Module.load_from_checkpoint(
-    #     "/home/*/Documents/Multi-seq-mae/data/backup_report_generation/cvt2distilgpt2_2023_11_02_15_41_16/ckpts/epoch=15-step=36368.ckpt",
-    #     **vars(hparams))
-    model = TemporalReportGenerationModule.load_from_checkpoint(
-        "/home/*/Documents/Multi-seq-mae/data/backup_report_generation/temporal_decoder_2023_10_25_21_08_26/ckpts/last.ckpt",
-        **vars(hparams))
-    datamodule = model.datamodule
-    trainer.test(model, datamodule=datamodule)
+    trainer.fit(model, datamodule=datamodule)
+    trainer.test(model, datamodule=datamodule, ckpt_path="best")
 
 
 if __name__ == "__main__":
-    '''
-    Command to run this script:
-    CUDA_VISIBLE_DEVICES=0,1 python biovlp/tools/train_report_generation.py --model_name clgen --batch_size 16 --num_devices 2
-    CUDA_VISIBLE_DEVICES=2,3 python biovlp/tools/train_report_generation.py --num_devices 2 --model_name cvt2distilgpt2 --batch_size 16
-    CUDA_VISIBLE_DEVICES=1 python biovlp/tools/train_report_generation.py --model_name temporal_decoder --batch_size 4 --num_devices 1
-    '''
     parser = ArgumentParser(description="Run model for report generation.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--train_data_pct", type=float, default=1.)
@@ -122,14 +105,6 @@ if __name__ == "__main__":
     parser.add_argument("--num_devices", type=int, default=2)
     parser.add_argument("--ckpt_path", type=str,
                         default="")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/cvt2distilgpt2_2023_10_19_15_57_05/ckpts/epoch=13-step=31822.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/clgen_2023_10_23_14_59_17/ckpts/epoch=3-step=12124.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/cvt2distilgpt2_2023_10_27_11_29_19/ckpts/epoch=10-step=19206.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/cvt2distilgpt2_2023_10_29_11_40_07/ckpts/epoch=5-step=10476.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/clgen_2023_10_29_21_58_12/ckpts/epoch=3-step=6984.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/cvt2distilgpt2_2023_11_02_15_41_16/ckpts/epoch=15-step=36368.ckpt")
-                        # default="/home/r15user2/Documents/Multi-seq-mae/data/report_generation/clgen_2023_11_03_13_26_45/ckpts/epoch=9-step=22730.ckpt")
-    # default="")
     parser.add_argument("--max_epochs", type=int, default=50)
     parser.add_argument("--accumulate_grad_batches", type=int, default=2)
     parser.add_argument("--max_seq_len", type=int, default=5)
