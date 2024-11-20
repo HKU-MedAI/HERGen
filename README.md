@@ -27,7 +27,7 @@ pip install -e .
 
 We are mainly using the [MIMIC-CXR v2.0.0](https://physionet.org/content/mimic-cxr/2.0.0/) dataset in our experiments. Please find download the original dataset in the PhysioNet website.
 
-There are **3** necessary to prepare the dataset:
+There are **3** necessary steps to prepare the dataset:
 
 1. Please use the MIMIC-CXR preprocessing code in our prior work [MGCA](https://github.com/HKU-MedAI/MGCA/blob/main/mgca/preprocess/mimic_cxr.py) to extract the `master.csv` file. 
 
@@ -39,6 +39,8 @@ There are **3** necessary to prepare the dataset:
 
 It results in two annotations: 
 `mimic_annotation.json` and `longitudinal_mimic_annotation.json` for original MIMIC-CXR and longitudinal MIMIC-CXR respectively.
+
+The preprocessed annotation files can also be downloaded in [this link](https://drive.google.com/drive/folders/1jaBZ4KfvcA0dWnGMEdjHkv-8zYNstyk1?usp=sharing).
 
 ## Train HERGen
 We are using curriculum learning to conduct training in three stages:
