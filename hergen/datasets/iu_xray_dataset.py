@@ -1,8 +1,8 @@
 import re
 from typing import Dict
 import torch
-from biovlp.datasets.base_dataset import BaseDataset
-from biovlp.datasets.iu_xray_chen_tokenizer import TokenizerChen
+from hergen.datasets.base_dataset import BaseDataset
+from hergen.datasets.iu_xray_chen_tokenizer import TokenizerChen
 
 
 class IUXrayDataset(BaseDataset):

@@ -2,7 +2,7 @@ from typing import Dict
 import pandas as pd
 import torch
 import ipdb
-from biovlp.datasets.mimic_cxr_dataset import MIMICCXRDataset
+from hergen.datasets.mimic_cxr_dataset import MIMICCXRDataset
 
 
 pd.set_option('mode.chained_assignment', None)

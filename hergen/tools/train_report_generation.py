@@ -7,10 +7,20 @@ from lightning import Trainer, seed_everything
 from lightning.pytorch.callbacks import (EarlyStopping, LearningRateMonitor,
                                          ModelCheckpoint)
 from lightning.pytorch.loggers import WandbLogger
-from biovlp.models.cvt2distilgpt2 import Cvt2DistilGPT2Module
-from biovlp.models.temporal_model import TemporalReportGenerationModule
-from biovlp.models.clgen_model import CLGenerationModule
+from hergen.models.cvt2distilgpt2 import Cvt2DistilGPT2Module
+from hergen.models.temporal_model import TemporalReportGenerationModule
+from hergen.models.clgen_model import CLGenerationModule
 import ipdb
+
+
+'''
+CUDA_VISIBLE_DEVICES=0 python tools/train_report_generation.py \
+    --model_name cvt2distilgpt2 --dataset_name iu_xray \
+    --annotation_file /disk1/luoxi/CXR_dataset/temporal_CXR/mimic_annotation.json \
+    --dataset_dir /disk1/luoxi/CXR_dataset/mimic_data/2.0.0/files \
+    --visual_model microsoft/cvt-21-384-22k \
+    --num_devices 1
+'''
 
 torch.autograd.set_detect_anomaly(True)
 torch.backends.cudnn.deterministic = True

@@ -1,7 +1,7 @@
 import torch
 from typing import Dict
-from biovlp.datasets.base_dataset import BaseDataset
-from biovlp.datasets.mimic_cxr_chen_tokenizer import TokenizerChen
+from hergen.datasets.base_dataset import BaseDataset
+from hergen.datasets.mimic_cxr_chen_tokenizer import TokenizerChen
 import ipdb
 
 

@@ -6,7 +6,7 @@ import os.path as op
 import yaml
 from yacs.config import CfgNode as CN
 
-from biovlp.ext.cvt.utils.comm import comm
+from hergen.ext.cvt.utils.comm import comm
 
 
 _C = CN()

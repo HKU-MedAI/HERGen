@@ -13,9 +13,9 @@ import torch.nn as nn
 # from health_multimodal.common.device import get_module_device
 from timm.models.layers import trunc_normal_
 
-from biovlp.backbones.resnet import resnet18, resnet50
-from biovlp.backbones.transformer import VisionTransformerPooler
-from biovlp.backbones.types import ImageEncoderType
+from hergen.backbones.resnet import resnet18, resnet50
+from hergen.backbones.transformer import VisionTransformerPooler
+from hergen.backbones.types import ImageEncoderType
 
 DEFAULT_DILATION_VALUES_FOR_RESNET = (False, False, True)
 ImageEncoderOutputType = Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]

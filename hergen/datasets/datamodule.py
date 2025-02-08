@@ -90,8 +90,8 @@ class DataModule(LightningDataModule):
 
 
 if __name__ == "__main__":
-    from biovlp.datasets.mimic_cxr_dataset import MIMICCXRDataset
-    from biovlp.datasets.temporal_mimic_cxr_dataset import TemporalMIMICCXRDataset, temporal_collate_fn
+    from hergen.datasets.mimic_cxr_dataset import MIMICCXRDataset
+    from hergen.datasets.temporal_mimic_cxr_dataset import TemporalMIMICCXRDataset, temporal_collate_fn
     from transformers import GPT2TokenizerFast
     language_model = "distilgpt2"
     tokenizer = GPT2TokenizerFast.from_pretrained(language_model)

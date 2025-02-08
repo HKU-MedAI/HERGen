@@ -14,9 +14,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 # from health_multimodal.common.device import get_module_device
 
-from biovlp.backbones.encoder import get_encoder_from_type, get_encoder_output_dim, MultiImageEncoder
-from biovlp.backbones.modules import MLP, MultiTaskModel
-from biovlp.backbones.types import ImageModelOutput
+from hergen.backbones.encoder import get_encoder_from_type, get_encoder_output_dim, MultiImageEncoder
+from hergen.backbones.modules import MLP, MultiTaskModel
+from hergen.backbones.types import ImageModelOutput
 
 
 class BaseImageModel(nn.Module, ABC):

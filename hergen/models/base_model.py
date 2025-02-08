@@ -5,13 +5,13 @@ import torch.nn.functional as F
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from transformers import AutoTokenizer
-from biovlp.datasets.base_dataset import custom_collate_fn
-from biovlp.datasets.datamodule import DataModule
-from biovlp.datasets.mimic_cxr_dataset import MIMICCXRDataset
-from biovlp.datasets.iu_xray_dataset import IUXrayDataset
-from biovlp.metrics.report_logger import ReportLogger
-from biovlp.metrics.coco import COCOCaptionMetrics
-from biovlp.metrics.chexbert import CheXbertMetrics
+from hergen.datasets.base_dataset import custom_collate_fn
+from hergen.datasets.datamodule import DataModule
+from hergen.datasets.mimic_cxr_dataset import MIMICCXRDataset
+from hergen.datasets.iu_xray_dataset import IUXrayDataset
+from hergen.metrics.report_logger import ReportLogger
+from hergen.metrics.coco import COCOCaptionMetrics
+from hergen.metrics.chexbert import CheXbertMetrics
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT_DIR = os.path.join(BASE_DIR, "../../")

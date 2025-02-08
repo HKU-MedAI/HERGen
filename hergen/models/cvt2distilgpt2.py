@@ -8,11 +8,11 @@ import torch.nn.functional as F
 from transformers import (GPT2Config, GPT2TokenizerFast,
                           GPT2LMHeadModel, PretrainedConfig, EncoderDecoderModel)
 from transformers.modeling_outputs import BaseModelOutput
-from biovlp.models.base_model import BaseLightningModule
-from biovlp.backbones.cvt import CvT
-from biovlp.backbones.vits import vit_base_patch16_384
-from biovlp.backbones.custom_resnet import get_resnet50
-# from biovlp.backbones.pretrained import get_biovil_t_image_encoder, get_biovil_image_encoder
+from hergen.models.base_model import BaseLightningModule
+from hergen.backbones.cvt import CvT
+from hergen.backbones.vits import vit_base_patch16_384
+from hergen.backbones.custom_resnet import get_resnet50
+# from hergen.backbones.pretrained import get_biovil_t_image_encoder, get_biovil_image_encoder
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT_DIR = os.path.join(BASE_DIR, "../../")

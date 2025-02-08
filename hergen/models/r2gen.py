@@ -4,8 +4,8 @@ from typing import Any
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 
-from biovlp.ext.r2gen import VisualExtractor, EncoderDecoder, compute_loss
-from biovlp.models.base_model import BaseLightningModule
+from hergen.ext.r2gen import VisualExtractor, EncoderDecoder, compute_loss
+from hergen.models.base_model import BaseLightningModule
 
 
 class R2Gen(BaseLightningModule):

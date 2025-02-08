@@ -2,9 +2,9 @@ import os
 import torch
 from torch.nn import Linear, Module
 from typing import Optional
-from biovlp.ext.cvt.models import build_model
-from biovlp.ext.cvt.config.default import _update_config_from_file
-from biovlp.ext.cvt.config.default import _C as config
+from hergen.ext.cvt.models import build_model
+from hergen.ext.cvt.config.default import _update_config_from_file
+from hergen.ext.cvt.config.default import _C as config
 
 BASE_DIR = os.path.join(os.path.dirname(__file__))
 REPO_ROOT = os.path.join(BASE_DIR, "../../")
@@ -62,7 +62,7 @@ class CvT(Module):
 
         # CvT
         args = Namespace(
-            cfg=os.path.join(REPO_ROOT, "biovlp", "ext", "cvt", "experiments", "imagenet", "cvt", model_config + ".yaml"))
+            cfg=os.path.join(REPO_ROOT, "hergen", "ext", "cvt", "experiments", "imagenet", "cvt", model_config + ".yaml"))
         _update_config_from_file(config, args.cfg)
         self.cvt = build_model(config)
         if self.warm_start:

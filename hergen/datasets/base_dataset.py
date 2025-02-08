@@ -8,7 +8,7 @@ import pandas as pd
 from torch.utils.data import Dataset as Dataset_pt
 from datasets import Dataset as Dataset_hg
 from PIL import Image
-from biovlp.datasets.transforms import get_transforms
+from hergen.datasets.transforms import get_transforms
 
 
 class BaseDataset(Dataset_pt):

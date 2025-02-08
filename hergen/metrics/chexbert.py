@@ -7,9 +7,9 @@ import torch.nn as nn
 from collections import OrderedDict
 from transformers import BertConfig, BertModel, BertTokenizer
 from sklearn.metrics import precision_recall_fscore_support
-from biovlp.metrics.natural_language import NaturalLanguage
+from hergen.metrics.natural_language import NaturalLanguage
 
-# from biovlp.utils import enumerated_save_path
+# from hergen.utils import enumerated_save_path
 
 """
 0 = blank/not mentioned

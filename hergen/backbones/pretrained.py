@@ -13,8 +13,8 @@ from torchvision.datasets.utils import download_url
 # from torchvision.models.resnet import model_urls
 from torchvision.models.resnet import ResNet50_Weights
 
-from biovlp.backbones.model import ImageModel
-from biovlp.backbones.types import ImageEncoderType, ImageEncoderWeightTypes
+from hergen.backbones.model import ImageModel
+from hergen.backbones.types import ImageEncoderType, ImageEncoderWeightTypes
 
 
 JOINT_FEATURE_SIZE = 128

@@ -10,12 +10,12 @@ from transformers import AutoModel, AutoTokenizer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from einops import rearrange
 from transformers.modeling_outputs import BaseModelOutput
-from biovlp.models.cvt2distilgpt2 import Cvt2DistilGPT2Module
-from biovlp.datasets.datamodule import DataModule
-from biovlp.datasets.temporal_mimic_cxr_dataset import TemporalMIMICCXRDataset, temporal_collate_fn
-# from biovlp.models.miniGPT import GPT
-from biovlp.models.group_causal_transformer import TemporalAggregator
-from biovlp.backbones.lr_scheduler import linear_warmup_decay
+from hergen.models.cvt2distilgpt2 import Cvt2DistilGPT2Module
+from hergen.datasets.datamodule import DataModule
+from hergen.datasets.temporal_mimic_cxr_dataset import TemporalMIMICCXRDataset, temporal_collate_fn
+# from hergen.models.miniGPT import GPT
+from hergen.models.group_causal_transformer import TemporalAggregator
+from hergen.backbones.lr_scheduler import linear_warmup_decay
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT_DIR = os.path.join(BASE_DIR, "../../")
