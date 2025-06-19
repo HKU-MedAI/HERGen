@@ -33,6 +33,8 @@ class BaseLightningModule(LightningModule):
                  num_beams: int = 3,
                  batch_size: int = 16,
                  image_size: int = 512,
+                 mean: float = 0.,
+                 std: float = 1.,
                  num_workers: int = 8,
                  learning_rate: float = 5e-5,
                  weight_decay: float = 0.05,
@@ -51,6 +53,8 @@ class BaseLightningModule(LightningModule):
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.image_size = image_size
+        self.mean = mean
+        self.std = std
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
         self.exp_log_dir = exp_log_dir
@@ -116,6 +120,8 @@ class BaseLightningModule(LightningModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             image_size=self.image_size,
+            mean=self.mean,
+            std=self.std,
             collate_fn=custom_collate_fn
         )
 

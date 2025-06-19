@@ -12,6 +12,8 @@ class IUXrayDataset(BaseDataset):
                  split: str,
                  tokenizer,
                  image_size: int = 512,
+                 mean: float = 0.,
+                 std: float = 1.,
                  max_length: int = 128,
                  train_data_pct: float = 1.,
                  return_label: bool = False,
@@ -24,7 +26,7 @@ class IUXrayDataset(BaseDataset):
         )
         self.chen_max_seq_length = 60
 
-        super().__init__(annotation_file, dataset_dir, split, tokenizer, image_size,
+        super().__init__(annotation_file, dataset_dir, split, tokenizer, image_size, mean, std, 
                          max_length, train_data_pct, return_label, return_kg)
 
     def __getitem__(self, index) -> Dict:

@@ -232,7 +232,7 @@ class CheXbertMetrics(NaturalLanguage):
         precision, recall, f1, _ = precision_recall_fscore_support(
             df_y_hat_5.T.values.reshape(-1), df_y_5.T.values.reshape(-1), average='binary')
 
-        # precision_5, recall_5, f1_5, _ = precision_recall_fscore_support(df_y_hat_5.values, df_y_5.values)
+        precision_5, recall_5, f1_5, _ = precision_recall_fscore_support(df_y_hat_5.values, df_y_5.values)
         precision_5, recall_5, f1_5 = [], [], []
         for i in range(5):
             p, r, f, _ = precision_recall_fscore_support(df_y_hat_5.iloc[:, i].values,

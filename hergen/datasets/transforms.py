@@ -4,9 +4,13 @@ from torchvision import transforms
 import cv2
 
 
-def get_transforms(split: str = "train", image_size: int = 224):
-    # mean = 0.471
-    # std = 0.302
+def get_transforms(split: str = "train", image_size: int = 224, mean=0, std=1):
+
+    # # mean=[0.485, 0.456, 0.406]
+    # # std=[0.229, 0.224, 0.225]
+    # # For biovil ... 
+    # mean = 0
+    # std = 1
 
     if split == "train":
         image_transforms = transforms.Compose(
@@ -19,8 +23,8 @@ def get_transforms(split: str = "train", image_size: int = 224):
                 transforms.RandomRotation(degrees=5),
                 transforms.ToTensor(),
                 transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225],
+                    mean=mean,
+                    std=std
                 ),
             ]
         )
@@ -31,8 +35,8 @@ def get_transforms(split: str = "train", image_size: int = 224):
                 transforms.CenterCrop(size=[image_size, image_size]),
                 transforms.ToTensor(),
                 transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225],
+                    mean=mean,
+                    std=std
                 ),
             ]
         )

@@ -18,6 +18,8 @@ class BaseDataset(Dataset_pt):
                  split: str,
                  tokenizer,
                  image_size: int,
+                 mean: float,
+                 std: float,
                  max_length: int,
                  train_data_pct: float,
                  return_label: bool,
@@ -35,7 +37,7 @@ class BaseDataset(Dataset_pt):
         self.tokenizer = tokenizer
         self.return_label = return_label
         self.return_kg = return_kg
-        self.image_transforms = get_transforms(split, image_size=image_size)
+        self.image_transforms = get_transforms(split, image_size=image_size, mean=mean, std=std)
 
         assert os.path.exists(
             self.annotation_file), f"Annotation file {self.annotation_file} doesn't exist!"
@@ -51,13 +53,13 @@ class BaseDataset(Dataset_pt):
         # create huggingface Dataset class, which is easy to tokenize
         dataset_as_dfs = pd.DataFrame(examples)
 
-        # FIXME: remove this line later
-        # longitudinal mimic
-        self.min_seq_length = 2
-        subject_cnts = dataset_as_dfs["subject_id"].value_counts()
-        cur_subject_cnts = subject_cnts[subject_cnts >= self.min_seq_length]
-        dataset_as_dfs = dataset_as_dfs.loc[dataset_as_dfs["subject_id"].isin(
-            cur_subject_cnts.index.tolist())]
+        # # FIXME: remove this line later
+        # # longitudinal mimic
+        # self.min_seq_length = 1
+        # subject_cnts = dataset_as_dfs["subject_id"].value_counts()
+        # cur_subject_cnts = subject_cnts[subject_cnts >= self.min_seq_length]
+        # dataset_as_dfs = dataset_as_dfs.loc[dataset_as_dfs["subject_id"].isin(
+        #     cur_subject_cnts.index.tolist())]
 
         def preprocess_chen_tokenizer(report):
             report = self.chen_tokenizer(report)[:self.chen_max_seq_length]

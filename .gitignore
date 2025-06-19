@@ -162,3 +162,7 @@ cython_debug/
 
 *.pdf
 *.csv
+temp/
+cache/
+cxr_data
+pretrained

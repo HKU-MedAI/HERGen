@@ -10,7 +10,7 @@ class DataModule(LightningDataModule):
     '''
 
     def __init__(self, dataset, tokenizer, annotation_file, dataset_dir, collate_fn, max_length=128,
-                 train_data_pct=1., batch_size=8, num_workers=4, image_size=512):
+                 train_data_pct=1., batch_size=8, num_workers=4, image_size=512, mean=0, std=1):
         super().__init__()
 
         self.dataset = dataset
@@ -23,6 +23,8 @@ class DataModule(LightningDataModule):
         self.num_workers = num_workers
         self.image_size = image_size
         self.collate_fn = collate_fn
+        self.mean = mean
+        self.std = std
 
     def train_dataloader(self):
 
@@ -33,7 +35,9 @@ class DataModule(LightningDataModule):
             tokenizer=self.tokenizer,
             train_data_pct=self.train_data_pct,
             max_length=self.max_length,
-            image_size=self.image_size
+            image_size=self.image_size,
+            mean=self.mean,
+            std=self.std
         )
 
         return DataLoader(
@@ -54,7 +58,9 @@ class DataModule(LightningDataModule):
             split="val",
             tokenizer=self.tokenizer,
             max_length=self.max_length,
-            image_size=self.image_size
+            image_size=self.image_size,
+            mean=self.mean,
+            std=self.std
         )
 
         return DataLoader(
@@ -75,7 +81,9 @@ class DataModule(LightningDataModule):
             split="test",
             tokenizer=self.tokenizer,
             max_length=self.max_length,
-            image_size=self.image_size
+            image_size=self.image_size,
+            mean=self.mean,
+            std=self.std
         )
 
         return DataLoader(

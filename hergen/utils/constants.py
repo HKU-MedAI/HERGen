@@ -33,3 +33,7 @@ CHEXPERT_UNCERTAIN_MAPPINGS = {
     "Edema": 1,
     "Pleural Effusion": 1,
 }
+
+TEMP_DIR = "/home/fywang/Documents/HERGen/temp"
+CHEXBERT_PATH = "/home/fywang/Documents/HERGen/pretrained/chexbert/chexbert.pth"
+RADGRAPH_PATH = "/disk1/fywang/CXR_dataset/physionet.org/files/radgraph/1.0.0/models/model_checkpoint/model.tar.gz"

@@ -5,6 +5,7 @@ import ipdb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import rearrange
 from transformers import (GPT2Config, GPT2TokenizerFast,
                           GPT2LMHeadModel, PretrainedConfig, EncoderDecoderModel)
 from transformers.modeling_outputs import BaseModelOutput
@@ -14,6 +15,7 @@ from hergen.backbones.vits import vit_base_patch16_384
 from hergen.backbones.custom_resnet import get_resnet50
 # from hergen.backbones.pretrained import get_biovil_t_image_encoder, get_biovil_image_encoder
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT_DIR = os.path.join(BASE_DIR, "../../")
 
@@ -27,11 +29,14 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
                  dataset_dir: str,
                  exp_log_dir: str,
                  visual_model: str = "microsoft/cvt-21-384-22k",
+                 freeze_visual_model: bool = False,
                  language_model: str = "distilgpt2",
                  train_data_pct: float = 1.,
                  max_length: int = 128,
                  batch_size: int = 16,
                  image_size: int = 384,
+                 mean: float = 0.,
+                 std: float = 1.,
                  num_workers: int = 16,
                  encoder_lr: float = 5e-5,
                  decoder_lr: float = 5e-4,
@@ -47,11 +52,43 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
             image_size = 384
         elif visual_model == "resnet_50":
             image_size = 224
+            mean = [0.485, 0.456, 0.406]
+            std = [0.229, 0.224, 0.225]
+        elif visual_model == "biovil_t":
+            image_size = 448
+            mean = 0
+            std = 1
+        elif visual_model == "biovil":
+            image_size = 480
+            mean = 0
+            std = 1
+        elif visual_model in ["gloria", "convirt", "random"]:
+            image_size = 224
+            mean = 0
+            std = 1
+        elif visual_model == "gloria_chexpert":
+            mean, std = 0.5, 0.5
+            image_size = 224
+        elif visual_model in ["medclip_vit", "medclip_cnn"]:
+            mean, std = 0.5862785803043838, 0.27950088968644304
+            image_size = 224
+        elif visual_model == "our_medclip":
+            mean, std = 0, 1
+            image_size = 512
+        elif visual_model == "medklip":
+            mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
+            image_size = 224
+        elif visual_model == "kad_resnet_224":
+            mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
+            image_size = 224
+        elif visual_model == "kad_resnet_512":
+            mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
+            image_size = 512
         else:
             raise NotImplementedError
 
         super().__init__(dataset_name, annotation_file, dataset_dir, exp_log_dir, language_model, train_data_pct,
-                         max_length, num_beams, batch_size, image_size, num_workers)
+                         max_length, num_beams, batch_size, image_size, mean, std, num_workers)
 
         self.encoder_lr = encoder_lr
         self.decoder_lr = decoder_lr
@@ -72,11 +109,11 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
 
             self.encoder_compact = nn.Conv1d(
                 in_channels=576, out_channels=50, kernel_size=1)
-
+        
         elif self.visual_model == "resnet_50":
             # self.encoder = get_biovil_image_encoder()
             # emb_dim = self.encoder.feature_size
-            self.encoder = get_resnet50(pretrained=True)
+            self.encoder = get_resnet50(pretrained=False)
             emb_dim = 2048
 
         elif self.visual_model == "vit_base_patch16_384":
@@ -86,8 +123,101 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
             # for each stage, remove 40 tokens
             # self.encoder.r = 40
             emb_dim = self.encoder.embed_dim
+        
+        elif self.visual_model == "biovil_t":
+            # Load biovil
+            from cxrseg.third_party.biovil.image import get_image_inference
+            from cxrseg.third_party.biovil.image.utils import ImageModelType
+
+            image_inference = get_image_inference(ImageModelType.BIOVIL_T)
+            self.encoder = image_inference.model
+            emb_dim = 512
+        
+        elif self.visual_model == "biovil":
+            # Load biovil
+            from cxrseg.third_party.biovil.image import get_image_inference
+            from cxrseg.third_party.biovil.image.utils import ImageModelType
+
+            image_inference = get_image_inference(ImageModelType.BIOVIL)
+            self.encoder = image_inference.model
+            emb_dim = 2048
+
+        elif self.visual_model == "gloria_chexpert":
+            from cxrseg.third_party.gloria.load_original_gloria import load_gloria
+            model = load_gloria()
+            self.encoder = model.img_encoder
+            emb_dim = 1024
+        
+        elif self.visual_model == "medclip_cnn":
+            from cxrseg.third_party.medclip import MedCLIPVisionModel, MedCLIPModel
+            medclip = MedCLIPModel(vision_cls=MedCLIPVisionModel)
+            medclip.from_pretrained(
+                input_dir="/home/fywang/Documents/CXRSeg/pretrained/medclip/medclip-resnet")
+            self.encoder = medclip.vision_model.model
+            emb_dim = 2048
+
+        elif self.visual_model == "medclip_vit":
+            from cxrseg.third_party.medclip import MedCLIPVisionModelViT, MedCLIPModel
+            medclip = MedCLIPModel(vision_cls=MedCLIPVisionModelViT)
+            medclip.from_pretrained(
+                input_dir="/home/fywang/Documents/CXRSeg/pretrained/medclip/medclip-vit")
+            self.encoder = medclip.vision_model.model
+            emb_dim = 768
+
+        elif self.visual_model == "our_medclip":
+            from cxrseg.modeling.our_medclip import SILCModule
+            # Load the checkpoint
+            ckpt = torch.load(
+                "/disk1/fywang/CXRSEG/logs/medclip/ckpts/MedCLIP_2024_04_21_14_48_11/epoch=11-step=5040.ckpt",
+                map_location=device)
+            hyper_parameters = ckpt["hyper_parameters"]
+            silc_module = SILCModule(**hyper_parameters).to(device)
+
+            # only load three modules
+            img_encoder_ckpt = dict()
+            for k, v in ckpt["state_dict"].items():
+                if "img_encoder_student" in k:
+                    img_encoder_ckpt[k.replace("img_encoder_student.", "")] = v
+
+            silc_module.img_encoder_student.load_state_dict(img_encoder_ckpt)
+            self.encoder = silc_module.img_encoder_student
+            emb_dim = 2048
+
+        elif self.visual_model == "medklip":
+            from cxrseg.third_party.medklip.load_pretrained_medklip import load_pretrained_medklip
+            medklip = load_pretrained_medklip(
+                model_path="/home/fywang/Documents/CXRSeg/pretrained/MedKLIP", device=device)
+            self.encoder = medklip
+            emb_dim = 256
+
+        elif self.visual_model == "kad_resnet_224":
+            from cxrseg.third_party.kad.A3_CLIP.models.clip_tqn import ModelRes, ModelRes512
+            image_encoder = ModelRes(res_base_model='resnet50').to(device)
+            checkpoint_path = "/home/fywang/Documents/CXRSeg/pretrained/KAD_Models/KAD_224/best_valid.pt"
+            checkpoint = torch.load(checkpoint_path, map_location='cpu')
+            image_state_dict = checkpoint['image_encoder']
+            image_encoder.load_state_dict(image_state_dict)
+            self.encoder = image_encoder
+            emb_dim = 768
+
+        elif self.visual_model == "kad_resnet_512":
+            from cxrseg.third_party.kad.A3_CLIP.models.clip_tqn import ModelRes, ModelRes512
+            image_encoder = ModelRes512(res_base_model='resnet50').to(device)
+            checkpoint_path = "/home/fywang/Documents/CXRSeg/pretrained/KAD_Models/KAD_512/best_valid.pt"
+            checkpoint = torch.load(checkpoint_path, map_location='cpu')
+            image_state_dict = checkpoint['image_encoder']
+            image_encoder.load_state_dict(image_state_dict)
+            self.encoder = image_encoder
+            emb_dim = 768
+
         else:
             raise NotImplementedError
+
+        # Freeze the visual model
+        if freeze_visual_model:
+            self.encoder.eval()
+            for param in self.encoder.parameters():
+                param.requires_grad = False
 
         self.encoder_projection = nn.Linear(emb_dim, 768)
 
@@ -174,8 +304,27 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
         elif self.visual_model == "vit_base_patch16_384":
             image_features = self.encoder(images, return_features=True)
             image_features = image_features[:, 1:]
+        elif self.visual_model in ["biovil", "biovil_t"]:
+            image_features = self.encoder(images).patch_embeddings
+            image_features = rearrange(image_features, "b d h w -> b (h w) d")
+        elif self.visual_model in ["gloria_chexpert", "gloria"]:
+            _, image_features = self.encoder(images, get_local=True)
+            image_features = rearrange(image_features, "b d h w -> b (h w) d")
+        elif self.visual_model == "medclip_cnn":
+            image_features = self.encoder(images)
+            image_features = rearrange(image_features, "b d h w -> b (h w) d")
+        elif self.visual_model == "medclip_vit":
+            image_features = self.encoder(images)['last_hidden_state']
+        elif self.visual_model == "our_medclip":
+            image_features = self.encoder(images)
+            image_features = rearrange(image_features, "b d h w -> b (h w) d")
+        elif self.visual_model == "medklip":
+            image_features = self.encoder.module.image_encoder(images)
+        elif self.visual_model in ["kad_resnet_224", "kad_resnet_512"]:
+            image_features, _ = self.encoder(images)
         else:
             raise NotImplementedError
+        
         del images
 
         # compact the image features
@@ -246,4 +395,5 @@ class Cvt2DistilGPT2Module(BaseLightningModule):
 
         optimiser = {'optimizer': torch.optim.AdamW(
             grouped_parameters, lr=self.decoder_lr)}
+
         return optimiser

@@ -13,15 +13,6 @@ from hergen.models.clgen_model import CLGenerationModule
 import ipdb
 
 
-'''
-CUDA_VISIBLE_DEVICES=0 python tools/train_report_generation.py \
-    --model_name cvt2distilgpt2 --dataset_name iu_xray \
-    --annotation_file /disk1/luoxi/CXR_dataset/temporal_CXR/mimic_annotation.json \
-    --dataset_dir /disk1/luoxi/CXR_dataset/mimic_data/2.0.0/files \
-    --visual_model microsoft/cvt-21-384-22k \
-    --num_devices 1
-'''
-
 torch.autograd.set_detect_anomaly(True)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
@@ -44,9 +35,9 @@ def main(hparams: Namespace):
     os.makedirs(ckpt_dir, exist_ok=True)
     callbacks = [
         LearningRateMonitor(logging_interval="step"),
-        ModelCheckpoint(monitor="val_chen_cider", dirpath=ckpt_dir,
+        ModelCheckpoint(monitor="val_ce_f1_example", dirpath=ckpt_dir,
                         save_last=True, mode="max", save_top_k=1),
-        EarlyStopping(monitor="val_chen_cider", min_delta=1e-4,
+        EarlyStopping(monitor="val_ce_f1_example", min_delta=0,
                       patience=10, verbose=False, mode="max")
     ]
     logger_dir = os.path.join(REPO_ROOT_DIR, "data/report_generation/logs")
@@ -61,7 +52,7 @@ def main(hparams: Namespace):
         # deterministic=True,
         devices=hparams.num_devices,
         strategy="ddp_find_unused_parameters_true",
-        precision="bf16-mixed",
+        precision="16",
         callbacks=callbacks,
         logger=wandb_logger
     )
@@ -93,13 +84,15 @@ def main(hparams: Namespace):
     trainer.fit(model, datamodule=datamodule)
     trainer.test(model, datamodule=datamodule, ckpt_path="best")
 
+    # trainer.test(model, datamodule=datamodule)
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Run model for report generation.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--train_data_pct", type=float, default=1.)
     parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--num_workers", type=int, default=16)
+    parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--model_name", type=str, default="cvt2distilgpt2",
                         choices=["cvt2distilgpt2", "temporal_decoder", "clgen"])
     parser.add_argument("--dataset_name", type=str, default="mimic_cxr",
@@ -110,14 +103,16 @@ if __name__ == "__main__":
     parser.add_argument("--dataset_dir", type=str,
                         default="/disk1/*/CXR_dataset/mimic_data/2.0.0/files"
                         )
-    parser.add_argument("--visual_model", type=str, default="microsoft/cvt-21-384-22k",
-                        choices=["microsoft/cvt-21-384-22k", "resnet_50", "vit_base_patch16_384"])
+    parser.add_argument("--visual_model", type=str, default="microsoft/cvt-21-384-22k")
     parser.add_argument("--num_devices", type=int, default=2)
     parser.add_argument("--ckpt_path", type=str,
                         default="")
     parser.add_argument("--max_epochs", type=int, default=50)
     parser.add_argument("--accumulate_grad_batches", type=int, default=2)
     parser.add_argument("--max_seq_len", type=int, default=5)
+    parser.add_argument("--freeze_visual_model", action="store_true")
+    parser.add_argument("--encoder_lr", type=float, default=1e-5)
+    parser.add_argument("--decoder_lr", type=float, default=1e-5)
     hparams = parser.parse_args()
 
     seed_everything(hparams.seed)
