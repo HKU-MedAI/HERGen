@@ -435,8 +435,8 @@ class TemporalReportGenerationModule(Cvt2DistilGPT2Module):
             collate_fn=temporal_collate_fn
         )
 
-        self.train_iters_per_epoch = 1000
-        # self.train_iters_per_epoch = len(
-        #     self.datamodule.train_dataloader()) // (self.num_devices * self.accumulate_grad_batches)
+        # self.train_iters_per_epoch = 1000
+        self.train_iters_per_epoch = len(
+            self.datamodule.train_dataloader()) // (self.num_devices * self.accumulate_grad_batches)
 
         return self.datamodule
